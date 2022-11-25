@@ -152,7 +152,7 @@ describe("Armin Test", function () {
       expect(await contract.allowlistMinted()).to.equal(maxAllowlistSupply);
 
       // mint 1 more to see that we can't mint more than MAX_ALLOWLIST_SUPPLY
-      await expect(contract.allowlistMint(owner.address, 1, proof, {value: allowlistPrice})).to.revertedWith('Purchase would exceed max supply for allowlist mint');;
+      await expect(contract.allowlistMint(owner.address, 1, proof, {value: allowlistPrice})).to.revertedWith('Purchase would exceed max supply for allowlist mint');
     })
 
     it("test merkle", async function() {
