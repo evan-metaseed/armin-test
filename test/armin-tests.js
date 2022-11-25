@@ -164,4 +164,34 @@ describe("Armin Test", function () {
 
     });
   })
+
+  describe("Test Payment Split Percents", function () {
+    it("test splits are accurate", async function () {
+      // send 1 ETH into contract
+      await owner.sendTransaction({
+        to: contract.address,
+        value: ethers.utils.parseEther("1.0"), // Sends exactly 1.0 ether
+      });
+
+      // check contract balance equals 1 ETH
+      expect(await contract.provider.getBalance(contract.address)).to.equal("1000000000000000000");
+
+      //withdraw splits
+      await contract.withdrawSplits();
+
+      // check each of the splits is accurate
+
+      // balance of 0x0aaDEEf83545196CCB2ce70FaBF8be1Afa3C9B87 is 10%
+      expect(await contract.provider.getBalance("0x0aaDEEf83545196CCB2ce70FaBF8be1Afa3C9B87")).to.equal("100000000000000000")
+      // balance of 0x95C62Cfc4dcf2615b6D0Ee27CE17578B8b446C64 is 27.5%
+      expect(await contract.provider.getBalance("0x95C62Cfc4dcf2615b6D0Ee27CE17578B8b446C64")).to.equal("275000000000000000")
+      // balance of 0x8E245915AE95a14c235FBDA3946d2A12048F92f2 is 31.25%
+      expect(await contract.provider.getBalance("0x8E245915AE95a14c235FBDA3946d2A12048F92f2")).to.equal("312500000000000000")
+      // balance of 0x4d85c1A432213D965aDCba935520A024399D26c0 is 15.625%
+      expect(await contract.provider.getBalance("0x4d85c1A432213D965aDCba935520A024399D26c0")).to.equal("156250000000000000")
+      // balance of 0xF69503e221117e7619E9FDdb9665417E7D643BeE is 15.625%
+      expect(await contract.provider.getBalance("0xF69503e221117e7619E9FDdb9665417E7D643BeE")).to.equal("156250000000000000")
+    });
+  });
+  
 });
