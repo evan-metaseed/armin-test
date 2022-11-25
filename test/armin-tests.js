@@ -59,6 +59,7 @@ describe("Armin Test", function () {
     let allowlistPrice;
     let pubPrice;
     let maxAllowlist;
+    let maxAllowlistSupply;
     
     beforeEach(async function () {
       allowlistPrice = ethers.utils.parseEther("0.15")
@@ -66,6 +67,7 @@ describe("Armin Test", function () {
       // max allowed to mint per wallet on allowlist
       maxAllowlist = await contract.maxAllowlist();
       maxSupply = await contract.MAX_SUPPLY()
+      maxAllowlistSupply =  await contract.MAX_ALLOWLIST_SUPPLY()
     })
 
     it("Test Allowlist Mints", async function () {
@@ -127,6 +129,30 @@ describe("Armin Test", function () {
       // ensure balance and presale counter are correct
       expect(await contract._allowlistCounter(owner.address)).to.equal(maxAllowlist);
       expect(await contract.balanceOf(owner.address)).to.equal(maxAllowlist);
+    })
+
+    it("Test MAX_ALLOWLIST_SUPPLY functions properly", async function () {
+      // set presale to true
+      await contract.setAllowlistActive(true);
+
+      // set merkle
+      const proof = preMerkle.getHexProof(keccak256(owner.address));
+
+      //set maxAllowList (per wallet) to be equal to be 1 larger than MAX_ALLOWLIST_SUPPLY for testing
+      await contract.setMaxAllowlist(5);
+      await contract.setAllowlistSupply(4);
+
+      //reassign new values
+      maxAllowlist= await contract.maxAllowlist();
+      maxAllowlistSupply = await contract.MAX_ALLOWLIST_SUPPLY();
+      // mint maxAllowListSupply
+      await contract.allowlistMint(owner.address, 4, proof, {value: allowlistPrice.mul('4')});
+      
+      // check allowlistMinted counter equals what we just minted
+      expect(await contract.allowlistMinted()).to.equal(maxAllowlistSupply);
+
+      // mint 1 more to see that we can't mint more than MAX_ALLOWLIST_SUPPLY
+      await expect(contract.allowlistMint(owner.address, 1, proof, {value: allowlistPrice})).to.revertedWith('Purchase would exceed max supply for allowlist mint');;
     })
 
     it("test merkle", async function() {
