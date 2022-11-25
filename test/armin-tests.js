@@ -143,10 +143,10 @@ describe("Armin Test", function () {
       await contract.setAllowlistSupply(4);
 
       //reassign new values
-      maxAllowlist= await contract.maxAllowlist();
+      maxAllowlist = await contract.maxAllowlist();
       maxAllowlistSupply = await contract.MAX_ALLOWLIST_SUPPLY();
       // mint maxAllowListSupply
-      await contract.allowlistMint(owner.address, 4, proof, {value: allowlistPrice.mul('4')});
+      await contract.allowlistMint(owner.address, maxAllowlistSupply, proof, {value: allowlistPrice.mul(maxAllowlistSupply)});
       
       // check allowlistMinted counter equals what we just minted
       expect(await contract.allowlistMinted()).to.equal(maxAllowlistSupply);
