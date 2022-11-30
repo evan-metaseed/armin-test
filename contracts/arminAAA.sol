@@ -249,7 +249,7 @@ contract ArminAAA is Ownable, ERC721A, ReentrancyGuard, DefaultOperatorFilterer 
         );
     }
 
-    // OperatorFilter
+    // Operator Filter
     function transferFrom(
         address from,
         address to,
