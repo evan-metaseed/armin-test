@@ -8,7 +8,7 @@
  *      / /| | / /| | / /| |
  *     / ___ |/ ___ |/ ___ |
  *    /_/  |_/_/  |_/_/  |_|
- */
+ */ 
 
 pragma solidity ^0.8.0;
 
@@ -17,9 +17,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {DefaultOperatorFilterer} from "./filter/DefaultOperatorFilterer.sol";
 import "./ERC721A.sol";
 
-contract ArminAAA is Ownable, ERC721A, ReentrancyGuard {
+contract ArminAAA is Ownable, ERC721A, ReentrancyGuard, DefaultOperatorFilterer {
     uint256 public MAX_SUPPLY = 6500;
     uint256 public MAX_ALLOWLIST_SUPPLY = 4000;
     uint256 public PRICE = 0.15 ether;
@@ -246,5 +247,31 @@ contract ArminAAA is Ownable, ERC721A, ReentrancyGuard {
             0xF69503e221117e7619E9FDdb9665417E7D643BeE,
             (balance * 15625) / 100000
         );
+    }
+
+    // OperatorFilter
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable override onlyAllowedOperator(from) {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public payable override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId, data);
     }
 }
